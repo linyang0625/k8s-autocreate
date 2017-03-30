@@ -14,7 +14,7 @@ yum install -y docker
 
 systemctl enable docker && systemctl start docker
 systemctl enable kubelet && systemctl start kubelet
-systemctl disable firewalld && systemctl stop firewalld
+systemctl disable firewalld
 
 ##Use accelerator of Aliyun docker hub
 sudo mkdir -p /etc/docker
