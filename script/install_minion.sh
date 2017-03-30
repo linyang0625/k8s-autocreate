@@ -22,8 +22,8 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
   "registry-mirrors": ["https://8vzilohj.mirror.aliyuncs.com"]
 }
 EOF
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+systemctl daemon-reload
+systemctl restart docker
 
 
 images=(pause-amd64:3.0 kube-proxy-amd64:v1.5.5  kube-dnsmasq-amd64:1.4 exechealthz-amd64:1.2
