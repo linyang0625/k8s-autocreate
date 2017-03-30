@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 hostnamectl set-hostname minion1
 
-setenforce 0
-
-yum -y install git
+#yum -y install git
 
 ##Get rpm and install
 #git clone https://github.com/xingangwang/k8s-rpm.git
-yum install -y docker
-#yum install -y k8s-rpm/*.rpm
-
-#yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
-
+yum -y install docker
 systemctl enable docker && systemctl start docker
+systemctl disable firewalld
+
+setenforce 0
+yum install -y /root/k8s-autocreate/rpm/*.rpm
+#yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
 systemctl enable kubelet && systemctl start kubelet
 systemctl disable firewalld
 

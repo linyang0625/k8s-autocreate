@@ -23,8 +23,8 @@ hostnamectl set-hostname master1
 #EOF
 
 yum update
-yum -y install git docker
 
+yum -y install docker
 systemctl enable docker && systemctl start docker
 systemctl disable firewalld
 
