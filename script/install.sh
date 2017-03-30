@@ -32,7 +32,7 @@ setenforce 0
 #mkdir -p /var/k8s-autocreate
 #cd /var/k8s-autocreate
 #git clone https://github.com/xingangwang/k8s-rpm.git
-yum install -y /root/k8s-autocreate/k8s-rpm/*.rpm
+yum install -y /root/k8s-autocreate/rpm/*.rpm
 
 ##Yum install online
 #yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
