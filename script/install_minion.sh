@@ -16,8 +16,8 @@ systemctl enable kubelet && systemctl start kubelet
 systemctl disable firewalld
 
 ##Use accelerator of Aliyun docker hub
-sudo mkdir -p /etc/docker
-sudo tee /etc/docker/daemon.json <<-'EOF'
+mkdir -p /etc/docker
+tee /etc/docker/daemon.json <<-'EOF'
 {
   "registry-mirrors": ["https://8vzilohj.mirror.aliyuncs.com"]
 }
