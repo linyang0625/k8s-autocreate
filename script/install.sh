@@ -5,34 +5,33 @@
 #CentOS Linux release 7.2.1511 (Core)
 hostnamectl set-hostname master1
 
-yum -y install dos2unix
-dos2unix install.sh
+#cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+#[kubelet]
+#name=kubelet
+#baseurl=http://files.rm-rf.ca/rpms/kubelet/
+#enabled=1
+#gpgcheck=0
+#EOF
 
-#yum update
-cat <<EOF > /etc/yum.repos.d/kubernetes.repo
-[kubelet]
-name=kubelet
-baseurl=http://files.rm-rf.ca/rpms/kubelet/
-enabled=1
-gpgcheck=0
-EOF
+#tee /etc/yum.repos.d/mritd.repo << EOF
+#[mritd]
+#name=Mritd Repository
+#baseurl=https://yum.mritd.me/centos/7/x86_64
+#enabled=1
+#gpgcheck=1
+#gpgkey=https://mritd.b0.upaiyun.com/keys/rpm.public.key
+#EOF
 
-tee /etc/yum.repos.d/mritd.repo << EOF
-[mritd]
-name=Mritd Repository
-baseurl=https://yum.mritd.me/centos/7/x86_64
-enabled=1
-gpgcheck=1
-gpgkey=https://mritd.b0.upaiyun.com/keys/rpm.public.key
-EOF
+yum update
+yum -y install git
+#yum install -y docker
 
 setenforce 0
 
-yum -y install git
-
 ##Get rpm and install
+mkdir -p /var/k8s-autocreate
+cd /var/k8s-autocreate
 git clone https://github.com/xingangwang/k8s-rpm.git
-yum install -y docker
 yum install -y k8s-rpm/*.rpm
 
 ##Yum install online
@@ -72,6 +71,11 @@ done
 ##Initialize master by kubeadm, TODO: Get join command text from output of below command
 ##--pod-network-cidr parameter is specified in flannel.yaml as next setp for installing pod network
 kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16
+
+name=$(kubectl get node | awk 'NR==2{print $1}')
+if [ $name = "master1" ];then
+  echo "ok"
+fi
 
 ##Installing a pod network
 kubectl apply -f flannel.yaml
