@@ -41,14 +41,14 @@ systemctl enable kubelet && systemctl start kubelet
 #yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
 
 ##Use accelerator of Aliyun docker hub
-sudo mkdir -p /etc/docker
-sudo tee /etc/docker/daemon.json <<-'EOF'
+mkdir -p /etc/docker
+tee /etc/docker/daemon.json <<-'EOF'
 {
   "registry-mirrors": ["https://8vzilohj.mirror.aliyuncs.com"]
 }
 EOF
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+systemctl daemon-reload
+systemctl restart docker
 
 ##Prepare images for initializing master
 images=(kube-proxy-amd64:v1.5.5 kube-controller-manager-amd64:v1.5.5 kube-scheduler-amd64:v1.5.5 kube-apiserver-amd64:v1.5.5
