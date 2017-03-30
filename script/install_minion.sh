@@ -27,11 +27,12 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 
 
-images=(pause-amd64:3.0 kube-proxy-amd64:v1.5.5)
+images=(pause-amd64:3.0 kube-proxy-amd64:v1.5.5  kube-dnsmasq-amd64:1.4 exechealthz-amd64:1.2
+ kubedns-amd64:1.9 dnsmasq-metrics-amd64:1.0)
 for imageName in ${images[@]} ; do
-  docker pull ctagk8s/$imageName
-  docker tag ctagk8s/$imageName gcr.io/google_containers/$imageName
-  docker rmi ctagk8s/$imageName
+  docker pull registry.cn-hangzhou.aliyuncs.com/accenture_ctag/$imageName
+  docker tag registry.cn-hangzhou.aliyuncs.com/accenture_ctag/$imageName gcr.io/google_containers/$imageName
+  docker rmi registry.cn-hangzhou.aliyuncs.com/accenture_ctag/$imageName
 done
 
 
