@@ -25,6 +25,8 @@ hostnamectl set-hostname master1
 yum update
 yum -y install git docker
 
+systemctl enable docker && systemctl start docker
+systemctl disable firewalld
 
 setenforce 0
 
@@ -33,13 +35,10 @@ setenforce 0
 #cd /var/k8s-autocreate
 #git clone https://github.com/xingangwang/k8s-rpm.git
 yum install -y /root/k8s-autocreate/rpm/*.rpm
+systemctl enable kubelet && systemctl start kubelet
 
 ##Yum install online
 #yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
-
-systemctl enable docker && systemctl start docker
-systemctl enable kubelet && systemctl start kubelet
-systemctl disable firewalld
 
 ##Use accelerator of Aliyun docker hub
 sudo mkdir -p /etc/docker
