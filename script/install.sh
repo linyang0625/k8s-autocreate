@@ -23,8 +23,8 @@ hostnamectl set-hostname master1
 #EOF
 
 yum update
-yum -y install git
-#yum install -y docker
+yum -y install git docker
+
 
 setenforce 0
 
