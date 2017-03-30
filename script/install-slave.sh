@@ -6,9 +6,9 @@ setenforce 0
 yum -y install git
 
 ##Get rpm and install
-git clone https://github.com/xingangwang/k8s-rpm.git
+#git clone https://github.com/xingangwang/k8s-rpm.git
 yum install -y docker
-yum install -y k8s-rpm/*.rpm
+#yum install -y k8s-rpm/*.rpm
 
 #yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
 
@@ -34,5 +34,4 @@ for imageName in ${images[@]} ; do
   docker rmi ctagk8s/$imageName
 done
 
-#kubeadm join --token=c616cd.f7eda853629c2eff 192.168.247.128
 
