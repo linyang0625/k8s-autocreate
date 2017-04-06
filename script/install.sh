@@ -78,6 +78,6 @@ fi
 
 ##Installing a pod network
 kubectl apply -f /root/k8s-autocreate/source/flannel.yaml
-kubectl apply -f /root/k8s-autocreate/source/kubernetes-dashboad.yaml
+kubectl apply -f /root/k8s-autocreate/source/kubernetes-dashboard.yaml
 
 #token=$(kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16 | sed -n '$p') && ssh 192.168.247.131 $token
