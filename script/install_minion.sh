@@ -9,13 +9,12 @@ yum -y install docker
 systemctl enable docker && systemctl start docker
 systemctl disable firewalld
 
-#setenforce 0
+setenforce 0
 sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
 
 yum install -y /root/k8s-autocreate/rpm/*.rpm
 #yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
 systemctl enable kubelet && systemctl start kubelet
-systemctl disable firewalld
 
 ##Use accelerator of Aliyun docker hub
 mkdir -p /etc/docker
