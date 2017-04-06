@@ -3,7 +3,7 @@
 #Linux ip-10-0-0-80 3.10.0-327.10.1.el7.x86_64 #1 SMP Tue Feb 16 17:03:50 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
 #cat /etc/redhat-release
 #CentOS Linux release 7.2.1511 (Core)
-hostnamectl --static set-hostname master
+#hostnamectl --static set-hostname master
 
 #cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 #[kubelet]
