@@ -28,7 +28,8 @@ yum -y install docker
 systemctl enable docker && systemctl start docker
 systemctl disable firewalld
 
-setenforce 0
+#setenforce 0
+sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
 
 ##Get rpm and install
 #mkdir -p /var/k8s-autocreate
