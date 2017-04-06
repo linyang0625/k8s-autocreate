@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-hostnamectl set-hostname minion1
+#hostnamectl set-hostname minion1
 
 #yum -y install git
 
