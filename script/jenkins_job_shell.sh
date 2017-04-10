@@ -4,7 +4,7 @@ ssh -n -o StrictHostKeyChecking=no root@${MasterIP} 'rm -rf ~/k8s-autocreate && 
 scp -r * root@${MasterIP}:'~/k8s-autocreate'
 ssh -n -o StrictHostKeyChecking=no root@${MasterIP} 'sh ~/k8s-autocreate/script/install.sh >> install.log'
 scp root@${MasterIP}:~/install.log install.log
-join_command=$(tail -7 install.log | sed -n 1p)
+join_command=$( sed -n '/kubeadm join/p' install.log)
 echo $join_command
 
 minions=${MinionsIP}
