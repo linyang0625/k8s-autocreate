@@ -36,7 +36,6 @@ sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
 #cd /var/k8s-autocreate
 
 basepath=$(cd 'dirname $0'/..; pwd)
-
 yum install -y $basepath/rpm/*.rpm
 systemctl enable kubelet && systemctl start kubelet
 
@@ -75,7 +74,7 @@ export KUBE_REPO_PREFIX=ctagk8s
 
 ##Initialize master by kubeadm, TODO: Get join command text from output of below command
 ##--pod-network-cidr parameter is specified in flannel.yaml as next setp for installing pod network
-kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16 >> $basepath/install.log
+kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16
 
 name=$(kubectl get node | awk 'NR==2{print $1}')
 if [ $name = "master1" ];then
@@ -93,6 +92,6 @@ minions=$2
 for minion in ${minions[@]} ; do
     ssh -n -o StrictHostKeyChecking=no root@${minion} 'rm -rf $basepath && rm -f install.log && mkdir $basepath'
     scp -r -i /root/jenkins_sshkey/id_rsa $basepath root@$minion:/$basepath
-    ssh -i /root/jenkins_sshkey/id_rsa root@$minion $basepath/script/install_minion.sh $1 >> install.log
-    ssh -i /root/jenkins_sshkey/id_rsa root@$minion $join_command
+    ssh -i /root/jenkins_sshkey/id_rsa root@$minion $basepath/script/install_minion.sh $1 $join_command>> install.log
+#    ssh -i /root/jenkins_sshkey/id_rsa root@$minion $join_command
 done
