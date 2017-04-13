@@ -93,5 +93,5 @@ for minion in ${minions[@]} ; do
     ssh -o StrictHostKeyChecking=no -i /root/jenkins_sshkey/id_rsa root@${minion} "rm -rf $basepath && rm -f install.log && mkdir $basepath"
     scp -r -i /root/jenkins_sshkey/id_rsa $basepath root@$minion:$basepath
     ssh -i /root/jenkins_sshkey/id_rsa root@$minion "sh $basepath/script/install_minion.sh $1 $join_command >> install.log"
-#    ssh -i /root/jenkins_sshkey/id_rsa root@$minion $join_command
+#    ssh -i /root/jenkins_sshkey/id_rsa root@$minion "$join_command"
 done
