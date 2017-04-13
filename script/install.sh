@@ -34,8 +34,10 @@ sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
 ##Get rpm and install
 #mkdir -p /var/k8s-autocreate
 #cd /var/k8s-autocreate
-#git clone https://github.com/xingangwang/k8s-rpm.git
-yum install -y /root/k8s-autocreate/rpm/*.rpm
+
+basepath=$(cd 'dirname $0/..';pwd)
+
+yum install -y $basepath/rpm/*.rpm
 systemctl enable kubelet && systemctl start kubelet
 
 ##Yum install online
@@ -43,22 +45,23 @@ systemctl enable kubelet && systemctl start kubelet
 
 ##Use accelerator of Aliyun docker hub
 mkdir -p /etc/docker
-tee /etc/docker/daemon.json <<-'EOF'
+cat > /etc/docker/daemon.json << EOF
 {
-  "registry-mirrors": ["https://8vzilohj.mirror.aliyuncs.com"]
+  "registry-mirrors": ["https://8vzilohj.mirror.aliyuncs.com"],
+   "insecure-registries":["$1"]
 }
 EOF
 systemctl daemon-reload
 systemctl restart docker
 
 ##Prepare images for initializing master
-images=(kube-proxy-amd64:v1.5.5 kube-controller-manager-amd64:v1.5.5 kube-scheduler-amd64:v1.5.5 kube-apiserver-amd64:v1.5.5
- etcd-amd64:3.0.14-kubeadm kube-discovery-amd64:1.0 pause-amd64:3.0 kube-dnsmasq-amd64:1.4 exechealthz-amd64:1.2 kubedns-amd64:1.9 dnsmasq-metrics-amd64:1.0)
-for imageName in ${images[@]} ; do
-	docker pull ctagk8s/$imageName
-	docker tag ctagk8s/$imageName gcr.io/google_containers/$imageName
-	docker rmi ctagk8s/$imageName
-done
+#images=(kube-proxy-amd64:v1.5.5 kube-controller-manager-amd64:v1.5.5 kube-scheduler-amd64:v1.5.5 kube-apiserver-amd64:v1.5.5
+# etcd-amd64:3.0.14-kubeadm kube-discovery-amd64:1.0 pause-amd64:3.0 kube-dnsmasq-amd64:1.4 exechealthz-amd64:1.2 kubedns-amd64:1.9 dnsmasq-metrics-amd64:1.0)
+#for imageName in ${images[@]} ; do
+#	docker pull ctagk8s/$imageName
+#	docker tag ctagk8s/$imageName gcr.io/google_containers/$imageName
+#	docker rmi ctagk8s/$imageName
+#done
 
 #images=(kube-proxy-amd64:v1.5.5 kube-controller-manager-amd64:v1.5.5 kube-scheduler-amd64:v1.5.5 kube-apiserver-amd64:v1.5.5
 # etcd-amd64:3.0.14-kubeadm kube-discovery-amd64:1.0 pause-amd64:3.0 kube-dnsmasq-amd64:1.4 exechealthz-amd64:1.2 kubedns-amd64:1.9 dnsmasq-metrics-amd64:1.0)
@@ -68,9 +71,11 @@ done
 #	docker rmi registry.cn-hangzhou.aliyuncs.com/accenture_ctag/$imageName
 #done
 
+export KUBE_REPO_PREFIX=ctagk8s
+
 ##Initialize master by kubeadm, TODO: Get join command text from output of below command
 ##--pod-network-cidr parameter is specified in flannel.yaml as next setp for installing pod network
-kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16
+kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16 >> $basepath/install.log
 
 name=$(kubectl get node | awk 'NR==2{print $1}')
 if [ $name = "master1" ];then
@@ -82,3 +87,12 @@ kubectl apply -f /root/k8s-autocreate/source/flannel.yaml
 kubectl apply -f /root/k8s-autocreate/source/kubernetes-dashboard.yaml
 
 #token=$(kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16 | sed -n '$p') && ssh 192.168.247.131 $token
+
+join_command=$( sed -n '/kubeadm join/p' install.log)
+minions=$2
+for minion in ${minions[@]} ; do
+    ssh -n -o StrictHostKeyChecking=no root@${minion} 'rm -rf $basepath && rm -f install.log && mkdir $basepath'
+    scp -r -i /root/jenkins_sshkey/id_rsa $basepath root@$minion:/$basepath
+    ssh -i /root/jenkins_sshkey/id_rsa root@$minion $basepath/script/install_minion.sh $1 >> install.log
+    ssh -i /root/jenkins_sshkey/id_rsa root@$minion $join_command
+done
