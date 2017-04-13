@@ -90,7 +90,7 @@ kubectl apply -f /root/k8s-autocreate/source/kubernetes-dashboard.yaml
 join_command=$( sed -n '/kubeadm join/p' install.log)
 minions=$2
 for minion in ${minions[@]} ; do
-    ssh -n -o StrictHostKeyChecking=no root@${minion} 'rm -rf $basepath && rm -f install.log && mkdir $basepath'
+    ssh -n -o StrictHostKeyChecking=no -i /root/jenkins_sshkey/id_rsa root@${minion} 'rm -rf $basepath && rm -f install.log && mkdir $basepath'
     scp -r -i /root/jenkins_sshkey/id_rsa $basepath root@$minion:/$basepath
     ssh -i /root/jenkins_sshkey/id_rsa root@$minion $basepath/script/install_minion.sh $1 $join_command>> install.log
 #    ssh -i /root/jenkins_sshkey/id_rsa root@$minion $join_command
