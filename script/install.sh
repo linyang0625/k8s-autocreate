@@ -35,7 +35,7 @@ sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
 #mkdir -p /var/k8s-autocreate
 #cd /var/k8s-autocreate
 
-basepath=$(cd 'dirname $0'/..; pwd)
+basepath=$(cd `dirname $0`/..; pwd)
 yum install -y $basepath/rpm/*.rpm
 systemctl enable kubelet && systemctl start kubelet
 

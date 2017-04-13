@@ -12,7 +12,7 @@ systemctl disable firewalld
 setenforce 0
 sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
 
-basepath=$(cd 'dirname $0'/..; pwd)
+basepath=$(cd `dirname $0`/..; pwd)
 yum install -y $basepath/rpm/*.rpm
 #yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
 systemctl enable kubelet && systemctl start kubelet
