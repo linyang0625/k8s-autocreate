@@ -12,6 +12,11 @@ systemctl disable firewalld
 setenforce 0
 sed -i '/SELINUX/s/enforcing/disabled/' /etc/selinux/config
 
+sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+sudo sysctl -w net.bridge.bridge-nf-call-ip6tables=1
+sed -i '$a\net.bridge.bridge-nf-call-iptables=1' /etc/sysctl.conf
+sed -i '$a\net.bridge.bridge-nf-call-ip6tables=1' /etc/sysctl.conf
+
 basepath=$(cd `dirname $0`/..; pwd)
 yum install -y $basepath/rpm/*.rpm
 #yum install -y docker kubelet kubeadm kubectl kubernetes-cni ebtables
