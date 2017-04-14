@@ -5,22 +5,17 @@
 #CentOS Linux release 7.2.1511 (Core)
 #hostnamectl --static set-hostname master
 
-#cat <<EOF > /etc/yum.repos.d/kubernetes.repo
-#[kubelet]
-#name=kubelet
-#baseurl=http://files.rm-rf.ca/rpms/kubelet/
-#enabled=1
-#gpgcheck=0
-#EOF
+registry_ip_port=$1
+minionsIP=$2
+hostname="master"
 
-#tee /etc/yum.repos.d/mritd.repo << EOF
-#[mritd]
-#name=Mritd Repository
-#baseurl=https://yum.mritd.me/centos/7/x86_64
-#enabled=1
-#gpgcheck=1
-#gpgkey=https://mritd.b0.upaiyun.com/keys/rpm.public.key
-#EOF
+#set hostname for node
+hostnamectl --static set-hostname $hostname
+
+cloud_cfg_file=/etc/cloud/cloud.cfg
+if [ -f "$cloud_cfg_file" ]; then
+  sed -i '$a\preserve_hostname: true' $cloud_cfg_file
+fi
 
 yum update
 
@@ -35,6 +30,8 @@ sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
 sudo sysctl -w net.bridge.bridge-nf-call-ip6tables=1
 sed -i '$a\net.bridge.bridge-nf-call-iptables=1' /etc/sysctl.conf
 sed -i '$a\net.bridge.bridge-nf-call-ip6tables=1' /etc/sysctl.conf
+
+
 
 ##Get rpm and install
 #mkdir -p /var/k8s-autocreate
@@ -52,7 +49,7 @@ mkdir -p /etc/docker
 cat > /etc/docker/daemon.json << EOF
 {
   "registry-mirrors": ["https://8vzilohj.mirror.aliyuncs.com"],
-   "insecure-registries":["$1"]
+   "insecure-registries":["$registry_ip_port"]
 }
 EOF
 systemctl daemon-reload
@@ -93,9 +90,9 @@ kubectl apply -f /root/k8s-autocreate/source/kubernetes-dashboard.yaml
 #token=$(kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16 | sed -n '$p') && ssh 192.168.247.131 $token
 
 join_command=$( sed -n '/kubeadm join/p' install.log)
-minions=$2
-for minion in ${minions[@]} ; do
+
+for minion in ${minionsIP[@]} ; do
     ssh -o StrictHostKeyChecking=no -i /root/jenkins_sshkey/id_rsa root@${minion} "rm -rf $basepath && rm -f install.log && mkdir $basepath"
     scp -r -i /root/jenkins_sshkey/id_rsa $basepath root@$minion:$basepath/..
-    ssh -i /root/jenkins_sshkey/id_rsa root@$minion "sh $basepath/script/install_minion.sh $1 \"$join_command\" >> install.log"
+    ssh -i /root/jenkins_sshkey/id_rsa root@$minion "sh $basepath/script/install_minion.sh $1 \"$join_command\" $minion >> install.log"
 done
