@@ -10,7 +10,7 @@ minionsIP=$2
 hostname="master"
 
 #set hostname for node
-hostnamectl --static set-hostname $hostname
+hostnamectl --static --transient set-hostname $hostname
 
 cloud_cfg_file=/etc/cloud/cloud.cfg
 if [ -f "$cloud_cfg_file" ]; then
