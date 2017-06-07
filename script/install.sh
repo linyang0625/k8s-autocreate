@@ -78,7 +78,7 @@ export KUBE_REPO_PREFIX=ctagk8s
 ##--pod-network-cidr parameter is specified in flannel.yaml as next setp for installing pod network
 kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16
 
-sed -i '--insecure-bind-address/s/127.0.0.1/0.0.0.0/' /etc/kubernetes/manifests/kube-apiserver.json
+sed -i '/--insecure-bind-address/s/127.0.0.1/0.0.0.0/' /etc/kubernetes/manifests/kube-apiserver.json
 sleep 5
 
 name=$(kubectl get node | awk 'NR==2{print $1}')
