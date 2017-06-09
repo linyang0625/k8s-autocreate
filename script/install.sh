@@ -79,6 +79,7 @@ export KUBE_REPO_PREFIX=ctagk8s
 kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16
 
 sed -i '/--insecure-bind-address/s/127.0.0.1/0.0.0.0/' /etc/kubernetes/manifests/kube-apiserver.json
+sed -i '$a\--runtime-config=batch/v2alpha1' /etc/kubernetes/manifests/kube-apiserver.json
 sleep 5
 
 name=$(kubectl get node | awk 'NR==2{print $1}')
