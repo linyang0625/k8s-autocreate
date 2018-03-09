@@ -7,6 +7,7 @@
 
 registry_ip_port=$1
 minionsIP=$2
+masterIP=$3
 hostname="master"
 
 #set hostname for node
@@ -76,7 +77,7 @@ export KUBE_REPO_PREFIX=ctagk8s
 
 ##Initialize master by kubeadm, TODO: Get join command text from output of below command
 ##--pod-network-cidr parameter is specified in flannel.yaml as next setp for installing pod network
-kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16
+kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16 --api-advertise-addresses $masterIP
 
 sed -i '/--insecure-bind-address/s/127.0.0.1/0.0.0.0/' /etc/kubernetes/manifests/kube-apiserver.json
 sed -i '$a\--runtime-config=batch/v2alpha1' /etc/kubernetes/manifests/kube-apiserver.json
