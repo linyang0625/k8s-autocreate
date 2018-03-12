@@ -95,7 +95,7 @@ kubectl apply -f /root/k8s-autocreate/source/kubernetes-dashboard.yaml
 
 #token=$(kubeadm init --use-kubernetes-version v1.5.5 --pod-network-cidr 10.244.0.0/16 | sed -n '$p') && ssh 192.168.247.131 $token
 
-join_command=$( sed -n '/kubeadm join/p' install.log)
+join_command=$( sed -n '/kubeadm join --skip-preflight-checks/p' install.log)
 
 for minion in ${minionsIP[@]} ; do
     ssh -o StrictHostKeyChecking=no -i /root/jenkins_sshkey/id_rsa root@${minion} "rm -rf $basepath && rm -f install.log && mkdir $basepath"
